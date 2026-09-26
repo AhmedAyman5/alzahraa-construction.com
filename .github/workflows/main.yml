@@ -28,15 +28,16 @@ jobs:
         run: npm run build
 
       - name: Sanitize FTP Server Hostname
+        id: sanitize
         run: |
           RAW_SERVER="${{ secrets.FTP_SERVER }}"
           CLEAN_SERVER=$(echo "$RAW_SERVER" | sed -e 's|^[a-zA-Z]*://||' -e 's|/.*$||' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-          echo "CLEAN_SERVER=$CLEAN_SERVER" >> $GITHUB_ENV
+          echo "clean_server=$CLEAN_SERVER" >> $GITHUB_OUTPUT
 
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ env.CLEAN_SERVER }}
+          server: ${{ steps.sanitize.outputs.clean_server }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: public_html/
