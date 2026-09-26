@@ -3,5 +3,7 @@ import type { Config } from '@react-router/dev/config';
 export default {
 	appDirectory: 'src',
 	buildDirectory: '../../dist/apps/web',
-	ssr: true,
+	async prerender() {
+		return ['/', '/about', '/services', '/projects', '/equipment', '/contact'];
+	},
 } satisfies Config;
