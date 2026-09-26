@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
   workflow_dispatch:
 
 jobs:
@@ -48,5 +47,4 @@ jobs:
           server-dir: ./
 
           dangerous-clean-slate: false
-
           security: loose
