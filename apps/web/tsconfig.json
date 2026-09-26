@@ -18,10 +18,6 @@
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
 		"forceConsistentCasingInFileNames": true,
-		"rootDirs": [
-			".",
-			"./.react-router/types"
-		],
 		"paths": {
 			"@/*": [
 				"./src/*"
