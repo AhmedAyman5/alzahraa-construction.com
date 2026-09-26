@@ -34,6 +34,11 @@ jobs:
           CLEAN_SERVER=$(echo "$RAW_SERVER" | sed -e 's|^[a-zA-Z]*://||' -e 's|/.*$||' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
           echo "server=$CLEAN_SERVER" >> $GITHUB_OUTPUT
 
+      - name: Verify Build Output Files
+        run: |
+          echo "Contents of dist/apps/web/client/:"
+          ls -la dist/apps/web/client/
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -41,6 +46,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: public_html/
-          local-dir: ./dist/apps/web/client/
+          local-dir: dist/apps/web/client/
           dangerous-clean-slate: true
           security: loose
