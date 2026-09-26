@@ -32,15 +32,15 @@ jobs:
         run: |
           RAW_SERVER="${{ secrets.FTP_SERVER }}"
           CLEAN_SERVER=$(echo "$RAW_SERVER" | sed -e 's|^[a-zA-Z]*://||' -e 's|/.*$||' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-          echo "clean_server=$CLEAN_SERVER" >> $GITHUB_OUTPUT
+          echo "server=$CLEAN_SERVER" >> $GITHUB_OUTPUT
 
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ steps.sanitize.outputs.clean_server }}
+          server: ${{ steps.sanitize.outputs.server }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: public_html/
           local-dir: ./dist/apps/web/client/
-          dangerous-clean-slate: false
+          dangerous-clean-slate: true
           security: loose
