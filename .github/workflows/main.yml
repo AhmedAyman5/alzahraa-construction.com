@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # يتيح تشغيل الـ Deploy يدوياً من جيت هب
+
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -18,7 +19,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: npm
           cache-dependency-path: package-lock.json
 
       - name: Install dependencies
@@ -27,25 +28,25 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Sanitize FTP Server Hostname
-        id: sanitize
+      - name: Verify Build Output
         run: |
-          RAW_SERVER="${{ secrets.FTP_SERVER }}"
-          CLEAN_SERVER=$(echo "$RAW_SERVER" | sed -e 's|^[a-zA-Z]*://||' -e 's|/.*$||' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-          echo "server=$CLEAN_SERVER" >> $GITHUB_OUTPUT
+          echo "===== BUILD OUTPUT ====="
+          find dist/apps/web/client -maxdepth 2 -type f | sort
+          echo "========================"
 
-      - name: Verify Build Output Files
-        run: |
-          echo "Contents of dist/apps/web/client/:"
-          ls -la dist/apps/web/client/
-
-      - name: Deploy to Hostinger via FTP
+      - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ steps.sanitize.outputs.server }}
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ./
+
+          protocol: ftps
+          port: 21
+
           local-dir: dist/apps/web/client/
-          dangerous-clean-slate: true
+          server-dir: public_html/
+
+          dangerous-clean-slate: false
+
           security: loose
