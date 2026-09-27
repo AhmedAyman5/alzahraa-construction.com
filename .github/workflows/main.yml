@@ -46,5 +46,6 @@ jobs:
           local-dir: dist/apps/web/client/
           server-dir: ./
 
+          git-ignore: false
           dangerous-clean-slate: false
           security: loose
