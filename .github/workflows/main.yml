@@ -11,6 +11,51 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Create FTP Test File
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      # نتأكد إن الـ build اتعمل فعلاً
+      - name: Verify Build
         run: |
-          echo "FTP TEST $(date)" > dist/apps/web/client/ftp-test.txt ;
+          echo "===== BUILD FILES ====="
+          ls -la dist/apps/web/client/
+          echo "===== INDEX CHECK ====="
+          test -f dist/apps/web/client/index.html
+          echo "index.html EXISTS"
+
+      # ملف اختبار عشان نعرف هل Hostinger استقبل الملفات
+      - name: Create Deployment Test File
+        run: |
+          echo "Deployment successful - $(date)" > dist/apps/web/client/deploy-test.txt
+
+      - name: Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+
+          protocol: ftps
+          port: 21
+
+          local-dir: dist/apps/web/client/
+
+          # حساب Hostinger عندك موجه لـ public_html
+          server-dir: ./
+
+          git-ignore: false
+          dangerous-clean-slate: false
+          security: loose
