@@ -27,11 +27,19 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Verify Build Output
+      # نتأكد إن الـ build اتعمل فعلاً
+      - name: Verify Build
         run: |
-          echo "===== BUILD OUTPUT ====="
-          find dist/apps/web/client -maxdepth 2 -type f | sort
-          echo "========================"
+          echo "===== BUILD FILES ====="
+          ls -la dist/apps/web/client/
+          echo "===== INDEX CHECK ====="
+          test -f dist/apps/web/client/index.html
+          echo "index.html EXISTS"
+
+      # ملف اختبار عشان نعرف هل Hostinger استقبل الملفات
+      - name: Create Deployment Test File
+        run: |
+          echo "Deployment successful - $(date)" > dist/apps/web/client/deploy-test.txt
 
       - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
@@ -44,7 +52,10 @@ jobs:
           port: 21
 
           local-dir: dist/apps/web/client/
+
+          # حساب Hostinger عندك موجه لـ public_html
           server-dir: ./
 
+          git-ignore: false
           dangerous-clean-slate: false
           security: loose
