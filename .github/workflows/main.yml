@@ -54,8 +54,8 @@ jobs:
           local-dir: dist/apps/web/client/
 
           # حساب Hostinger عندك موجه لـ public_html
-          server-dir: ./
+          server-dir: domains/alzahraa-construction.com/public_html/
 
-          git-ignore: false
+      
           dangerous-clean-slate: false
           security: loose
