@@ -11,40 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Verify Build Output
+      - name: Create FTP Test File
         run: |
-          echo "===== BUILD OUTPUT ====="
-          find dist/apps/web/client -maxdepth 2 -type f | sort
-          echo "========================"
-
-      - name: Deploy to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          port: 21
-
-          local-dir: dist/apps/web/client/
-          server-dir: public_html/
-
-          git-ignore: false
-          dangerous-clean-slate: false
-          security: loose
+          echo "FTP TEST $(date)" > dist/apps/web/client/ftp-test.txt ;
